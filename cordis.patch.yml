@@ -1,0 +1,4 @@
+- insert:
+    - id: menu-tree-editor
+      name: '@local/dsh-menu-tree-editor'
+      config: {}
