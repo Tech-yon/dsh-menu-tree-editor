@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Menu Tree Editor",
-    "description": "Visually build multi-level menu diagrams: edit text inside modules, drag them freely, add child modules level by level, use undo/redo, copy/paste, JSON or image export, and pick any local folder to create and switch multiple menu files."
+    "title": "Notes",
+    "description": "A menu-tree and notebook workspace: open the multi-level menu tree from the Advanced menu, or organize daily notes into groups. Auto-save, update history, search, drag grouping, undo delete, backup import/export, and local text-file linking."
   }
 }

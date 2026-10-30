@@ -14,6 +14,9 @@ window.__ModuleLoader__.load({
     const DOC_KEY = 'dsh:menu-tree-editor:doc:v1';
     const WORKSPACE_KEY = 'dsh:menu-tree-editor:workspace:v1';
     const WORKSPACE_CHANNEL = '/menu-tree-editor';
+    const NOTES_KEY = 'dsh:menu-tree-editor:notes:v1';
+    const APP_VIEW_KEY = 'dsh:menu-tree-editor:app-view:v1';
+    const NOTE_UNDO_LIMIT = 20;
     let clipboardStore = null;
 
     /* ------------------------------------------------------------------ */
@@ -22,7 +25,7 @@ window.__ModuleLoader__.load({
 
     const STRINGS = {
       zh: {
-        panelLabel: '菜单树',
+        panelLabel: '记事',
         title: '多级菜单树',
         subtitle: '双击模块填写文字，拖动调整位置，从任意模块继续向下新建子模块。',
         newRoot: '新建根模块',
@@ -118,9 +121,93 @@ window.__ModuleLoader__.load({
         moved: '已移动模块',
         shortcuts: '按住模块拖动 · 双击编辑 · Ctrl+S 保存 · Ctrl+Z 撤销 · Ctrl+Y 重做 · Ctrl+C/V 复制粘贴',
         canvasHint: '滚轮缩放 · 拖动空白处平移画布',
+        appTitle: '记事',
+        appSubtitle: '菜单树与笔记本',
+        advancedMenu: '高级菜单',
+        tools: '工具',
+        notebook: '笔记本',
+        menuTree: '多级菜单树',
+        nbAll: '全部记事',
+        nbUngrouped: '未分组',
+        nbGroups: '文件组',
+        nbArchive: '归档',
+        nbNewGroup: '新建文件组',
+        nbNewNote: '新建记事',
+        nbSearch: '搜索标题 / 内容 / 历史…',
+        nbDragTip: '拖动卡片可分组',
+        nbEmpty: '这里还没有记事',
+        nbEmptyHint: '点击右上角「＋」开始记录',
+        nbNoNote: '选择一篇记事，或新建一篇开始记录',
+        nbNoNoteHint: '自动保存 · 更新历史 · 可关联本地文件',
+        nbUntitled: '无标题记事',
+        nbContent: '在这里记录内容…',
+        nbSave: '保存',
+        nbSaveAs: '另存为',
+        nbLink: '关联文件',
+        nbUnlink: '解除关联',
+        nbLinked: '已关联',
+        nbLinkedHint: 'Ctrl+S 同步写回',
+        nbRelink: '重新关联',
+        nbLinkLost: '上次关联，需重新授权',
+        nbArchiveNote: '归档',
+        nbRestore: '恢复',
+        nbDelete: '删除',
+        nbRename: '重命名',
+        nbArchiveGroup: '归档文件组',
+        nbDeleteGroup: '删除文件组',
+        nbRestoreGroup: '恢复',
+        nbPurgeGroup: '彻底删除',
+        nbArchivedBanner: '归档记事 · 正文可直接编辑',
+        nbArchivedTag: '已归档',
+        nbCreated: '创建于',
+        nbUpdated: '最近更新',
+        nbUpdates: '次更新',
+        nbHistory: '更新历史',
+        nbUpdateNote: '本次更新说明（可选）',
+        nbDirty: '未保存',
+        nbSaved: '已保存',
+        nbSaveFailed: '保存失败',
+        nbUndoEmpty: '删除后按 Ctrl+Z 可恢复（焦点不在编辑区时）',
+        nbUndo: '撤销',
+        nbDeleted: '已删除',
+        nbRestored: '已恢复',
+        nbExport: '导出备份',
+        nbImport: '导入',
+        nbGroupPrompt: '文件组名称',
+        nbGroupRename: '重命名文件组',
+        nbGroupCreated: '已创建文件组',
+        nbGroupArchived: '文件组已归档',
+        nbGroupDeleted: '文件组已删除',
+        nbGroupRestored: '文件组已恢复',
+        nbMoved: '已移动',
+        nbNoGroup: '未分组',
+        nbGroupLabel: '文件组',
+        nbImportFailed: '导入失败：文件格式不正确',
+        nbImported: '导入完成',
+        nbExported: '已导出备份',
+        nbLinkUnsupported: '当前环境不支持直接关联本地文件，请使用导出/导入',
+        nbLinkedToast: '已关联本地文件',
+        nbLinkSaved: '已保存到记事本与本地文件',
+        nbLinkSaveFail: '已保存到记事本（本地文件写入失败）',
+        nbUnlinked: '已解除关联',
+        nbConfirmArchiveGroup: '归档文件组及其记事？',
+        nbConfirmDeleteGroup: '删除文件组？组内记事会移至未分组。',
+        nbConfirmPurgeGroup: '彻底删除文件组及其记事？此操作不可恢复。',
+        nbDropHint: '松开即可导入为记事',
+        nbFileImported: '已导入文件',
+        nbConfirm: '确定',
+        nbCancel: '取消',
+        nbNameEmpty: '名称不能为空',
+        nbSearchPrefix: '搜索',
+        nbBlank: '（空白记事）',
+        nbHistoryCreated: '创建',
+        nbHistoryFile: '文件',
+        nbNoUndo: '没有可撤销的删除',
+        nbNoteArchived: '记事已归档',
+        nbNoteRestored: '记事已恢复',
       },
       en: {
-        panelLabel: 'Menu Tree',
+        panelLabel: 'Notes',
         title: 'Multi-level menu tree',
         subtitle: 'Double-click a module to edit its text, drag to arrange it, and add children from any module.',
         newRoot: 'New root module',
@@ -216,6 +303,90 @@ window.__ModuleLoader__.load({
         moved: 'Module moved',
         shortcuts: 'Hold a module to drag · Double-click edit · Ctrl+S save · Ctrl+Z undo · Ctrl+Y redo · Ctrl+C/V copy & paste',
         canvasHint: 'Wheel to zoom · drag empty space to pan',
+        appTitle: 'Notes',
+        appSubtitle: 'Menu tree & notebook',
+        advancedMenu: 'Advanced menu',
+        tools: 'Tools',
+        notebook: 'Notebook',
+        menuTree: 'Menu tree',
+        nbAll: 'All notes',
+        nbUngrouped: 'Ungrouped',
+        nbGroups: 'Groups',
+        nbArchive: 'Archive',
+        nbNewGroup: 'New group',
+        nbNewNote: 'New note',
+        nbSearch: 'Search title / content / history…',
+        nbDragTip: 'Drag cards into groups',
+        nbEmpty: 'No notes here yet',
+        nbEmptyHint: 'Click + above to start writing',
+        nbNoNote: 'Select a note, or create one to start writing',
+        nbNoNoteHint: 'Auto-save · history · optional local file link',
+        nbUntitled: 'Untitled note',
+        nbContent: 'Write here…',
+        nbSave: 'Save',
+        nbSaveAs: 'Save as',
+        nbLink: 'Link file',
+        nbUnlink: 'Unlink',
+        nbLinked: 'Linked',
+        nbLinkedHint: 'Ctrl+S writes back',
+        nbRelink: 'Relink',
+        nbLinkLost: 'Previously linked — reauthorize',
+        nbArchiveNote: 'Archive',
+        nbRestore: 'Restore',
+        nbDelete: 'Delete',
+        nbRename: 'Rename',
+        nbArchiveGroup: 'Archive group',
+        nbDeleteGroup: 'Delete group',
+        nbRestoreGroup: 'Restore',
+        nbPurgeGroup: 'Delete permanently',
+        nbArchivedBanner: 'Archived note · the body stays editable',
+        nbArchivedTag: 'Archived',
+        nbCreated: 'Created',
+        nbUpdated: 'Updated',
+        nbUpdates: 'updates',
+        nbHistory: 'Update history',
+        nbUpdateNote: 'Update note (optional)',
+        nbDirty: 'Unsaved',
+        nbSaved: 'Saved',
+        nbSaveFailed: 'Save failed',
+        nbUndoEmpty: 'Press Ctrl+Z outside the editor to restore a deletion',
+        nbUndo: 'Undo',
+        nbDeleted: 'Deleted',
+        nbRestored: 'Restored',
+        nbExport: 'Export backup',
+        nbImport: 'Import',
+        nbGroupPrompt: 'Group name',
+        nbGroupRename: 'Rename group',
+        nbGroupCreated: 'Group created',
+        nbGroupArchived: 'Group archived',
+        nbGroupDeleted: 'Group deleted',
+        nbGroupRestored: 'Group restored',
+        nbMoved: 'Moved',
+        nbNoGroup: 'Ungrouped',
+        nbGroupLabel: 'Group',
+        nbImportFailed: 'Import failed: invalid backup file',
+        nbImported: 'Import complete',
+        nbExported: 'Backup exported',
+        nbLinkUnsupported: 'This environment cannot link local files directly; use export and import instead',
+        nbLinkedToast: 'Local file linked',
+        nbLinkSaved: 'Saved to notebook and local file',
+        nbLinkSaveFail: 'Saved to notebook (local file write failed)',
+        nbUnlinked: 'Local file unlinked',
+        nbConfirmArchiveGroup: 'Archive this group and its notes?',
+        nbConfirmDeleteGroup: 'Delete this group? Its notes move to Ungrouped.',
+        nbConfirmPurgeGroup: 'Permanently delete this group and its notes? This cannot be undone.',
+        nbDropHint: 'Drop to import as notes',
+        nbFileImported: 'File imported',
+        nbConfirm: 'Confirm',
+        nbCancel: 'Cancel',
+        nbNameEmpty: 'Name cannot be empty',
+        nbSearchPrefix: 'Search',
+        nbBlank: '(Empty note)',
+        nbHistoryCreated: 'Created',
+        nbHistoryFile: 'File',
+        nbNoUndo: 'Nothing to undo',
+        nbNoteArchived: 'Note archived',
+        nbNoteRestored: 'Note restored',
       },
     };
 
@@ -481,6 +652,128 @@ window.__ModuleLoader__.load({
       return (error && error.message) || t('fileLoadFailed');
     }
 
+    /* ------------------------------------------------------------------ */
+    /* Notebook model                                                      */
+    /* ------------------------------------------------------------------ */
+
+    function notebookUid() {
+      return 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    }
+
+    function seedNotebook() {
+      const now = Date.now();
+      const groupId = notebookUid();
+      return {
+        version: 1,
+        meta: { seeded: true },
+        groups: [{ id: groupId, name: '使用说明', createdAt: now, archived: false }],
+        notes: [
+          {
+            id: notebookUid(),
+            groupId,
+            title: '欢迎使用记事',
+            content:
+              '欢迎使用记事 👋\n\n' +
+              '【视图】\n' +
+              '· 左侧切换全部记事、未分组、文件组和归档\n' +
+              '· 中间搜索标题、正文和更新历史；拖动卡片到左侧文件组即可归类\n\n' +
+              '【编辑】\n' +
+              '· 右侧编辑标题和正文，停止输入约 1.5 秒自动保存\n' +
+              '· 保存前可填写「本次更新说明」，底部可展开更新历史\n' +
+              '· Ctrl+S 立即保存\n\n' +
+              '【撤销删除】\n' +
+              '· 删除记事会弹出带「撤销」的提示\n' +
+              '· 焦点不在正文或标题时，按 Ctrl+Z 可恢复最近删除的记事\n\n' +
+              '【本地文件】\n' +
+              '· 「关联文件」可以绑定本地 txt/md 等文本文件，Ctrl+S 同步写回\n' +
+              '· 「另存为」把当前记事写成新的本地文件\n' +
+              '· 也可以把本地文本文件直接拖进列表导入\n\n' +
+              '【备份】\n' +
+              '· 「导出备份」保存全部记事和文件组，随时可以「导入」恢复',
+            createdAt: now,
+            updatedAt: now,
+            archived: false,
+            linkedFileName: null,
+            history: [{ t: now, text: '', created: true }],
+          },
+        ],
+      };
+    }
+
+    function loadNotebook() {
+      try {
+        const raw = localStorage.getItem(NOTES_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.notes) && Array.isArray(parsed.groups)) {
+            parsed.meta = parsed.meta && typeof parsed.meta === 'object' ? parsed.meta : { seeded: true };
+            parsed.notes = parsed.notes.map((note) => ({
+              ...note,
+              history: Array.isArray(note.history) ? note.history : [],
+              archived: Boolean(note.archived),
+              linkedFileName: typeof note.linkedFileName === 'string' ? note.linkedFileName : null,
+            }));
+            return parsed;
+          }
+        }
+      } catch {
+        /* fall through to a fresh notebook */
+      }
+      const seeded = seedNotebook();
+      try {
+        localStorage.setItem(NOTES_KEY, JSON.stringify(seeded));
+      } catch {
+        /* storage may be unavailable */
+      }
+      return seeded;
+    }
+
+    function persistNotebook(db) {
+      try {
+        localStorage.setItem(NOTES_KEY, JSON.stringify(db));
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function noteDateFull(timestamp) {
+      const date = new Date(timestamp);
+      const pad = (value) => String(value).padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function noteDateShort(timestamp) {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const pad = (value) => String(value).padStart(2, '0');
+      if (date.getFullYear() === now.getFullYear()) {
+        return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      }
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+
+    function noteText(value) {
+      return String(value == null ? '' : value);
+    }
+
+    function supportsNotebookFiles() {
+      return (
+        typeof window !== 'undefined' &&
+        typeof window.showOpenFilePicker === 'function' &&
+        typeof window.showSaveFilePicker === 'function'
+      );
+    }
+
+    function notebookFileName(title) {
+      const safe = String(title || '未命名').replace(/[\\/:*?"<>|]/g, '_').slice(0, 60);
+      return safe + '.txt';
+    }
+
+    function cloneNote(note) {
+      return JSON.parse(JSON.stringify(note));
+    }
+
     function buildMarkdown(nodes, t) {
       if (!nodes.length) return '# ' + t('outlineHeading') + '\n\n(' + t('unnamed') + ')\n';
       const children = groupChildren(nodes);
@@ -704,6 +997,15 @@ window.__ModuleLoader__.load({
       filePlus: 'M6 3h8l4 4v14H6zM14 3v5h5M12 12v6M9 15h6',
       save: 'M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6',
       refresh: 'M4 12a8 8 0 0 1 14-5M20 4v5h-5M20 12a8 8 0 0 1-14 5M4 20v-5h5',
+      notebook: 'M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM5 4v16M9 8h6M9 12h5',
+      menu: 'M4 7h16M4 12h16M4 17h16',
+      chevron: 'M8 10l4 4 4-4',
+      check: 'M5 12l4 4 9-9',
+      search: 'M11 4a7 7 0 1 1 0 14 7 7 0 0 1 0-14zM16 16l4 4',
+      note: 'M6 3h9l5 5v13H6zM15 3v5h5M9 13h7M9 17h5',
+      link: 'M9 15l6-6M8 11l-2 2a3 3 0 0 0 4 4l2-2M16 13l2-2a3 3 0 0 0-4-4l-2 2',
+      close: 'M6 6l12 12M18 6L6 18',
+      archive: 'M4 7h16v4H4zM6 11v9h12v-9M9 15h6',
     };
 
     function Glyph({ name }) {
@@ -753,15 +1055,18 @@ window.__ModuleLoader__.load({
           style: { display: 'block' },
         },
         h('path', {
-          d: 'M12 7.2v4.4M6 15.6v-1.4h12v1.4M12 11.6v2.6',
+          d: 'M6 4h10a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2zM6 4v16M10 8h5M10 12h4',
           stroke: 'currentColor',
           strokeWidth: 1.6,
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
         }),
-        h('circle', { cx: 12, cy: 5, r: 2.4, stroke: 'currentColor', strokeWidth: 1.6 }),
-        h('circle', { cx: 6, cy: 18, r: 2.4, stroke: 'currentColor', strokeWidth: 1.6 }),
-        h('circle', { cx: 18, cy: 18, r: 2.4, stroke: 'currentColor', strokeWidth: 1.6 }),
+        h('path', {
+          d: 'M15 4v5l-1.5-1L12 9V4',
+          stroke: 'currentColor',
+          strokeWidth: 1.6,
+          strokeLinejoin: 'round',
+        }),
       );
     }
 
@@ -911,7 +1216,1510 @@ window.__ModuleLoader__.load({
     /* Editor page                                                         */
     /* ------------------------------------------------------------------ */
 
-    function EditorPage({ t, rpc, pickDirectory }) {
+    function NotebookPage({ t }) {
+      const [db, setDb] = useState(() => loadNotebook());
+      const [view, setView] = useState('all');
+      const [noteId, setNoteId] = useState(null);
+      const [title, setTitle] = useState('');
+      const [content, setContent] = useState('');
+      const [updateNote, setUpdateNote] = useState('');
+      const [dirty, setDirty] = useState(false);
+      const [historyOpen, setHistoryOpen] = useState(false);
+      const [dialog, setDialog] = useState(null);
+      const [notice, setNotice] = useState(null);
+      const [draggingId, setDraggingId] = useState(null);
+      const [dropTarget, setDropTarget] = useState(null);
+      const [fileDrag, setFileDrag] = useState(false);
+      const [search, setSearch] = useState('');
+
+      const dbRef = useRef(db);
+      dbRef.current = db;
+      const titleRef = useRef(null);
+      const contentRef = useRef(null);
+      const importRef = useRef(null);
+      const handlesRef = useRef(new Map());
+      const undoRef = useRef([]);
+      const latestRef = useRef(null);
+      latestRef.current = { noteId, title, content, updateNote, dirty };
+
+      function notify(text, tone, options) {
+        const settings = options || {};
+        setNotice({
+          text,
+          tone: tone || 'ok',
+          key: Date.now(),
+          actionText: settings.actionText || '',
+          onAction: typeof settings.onAction === 'function' ? settings.onAction : null,
+          duration: settings.duration || 2600,
+        });
+      }
+
+      function applyDB(next) {
+        dbRef.current = next;
+        setDb(next);
+        if (!persistNotebook(next)) notify(t('nbSaveFailed'), 'error');
+      }
+
+      function noteById(id) {
+        return dbRef.current.notes.find((note) => note.id === id) || null;
+      }
+
+      function groupById(id) {
+        return dbRef.current.groups.find((group) => group.id === id) || null;
+      }
+
+      async function writeNoteFile(id, text) {
+        const handle = handlesRef.current.get(id);
+        if (!handle) return true;
+        try {
+          const writable = await handle.createWritable();
+          await writable.write(text);
+          await writable.close();
+          return true;
+        } catch (error) {
+          console.error('[notebook] write failed', error);
+          if (error && error.name === 'NotAllowedError') handlesRef.current.delete(id);
+          return false;
+        }
+      }
+
+      function commitNote(manual) {
+        const note = noteById(noteId);
+        if (!note) {
+          if (manual) notify(t('nbNoNote'), 'error');
+          return;
+        }
+        const nextTitle = title.trim();
+        const nextContent = content;
+        const noteText = updateNote.trim();
+        const changed = nextTitle !== note.title || nextContent !== note.content;
+        if (!changed && !noteText && !manual) {
+          setDirty(false);
+          return;
+        }
+        const now = Date.now();
+        const history = note.history.slice();
+        if (noteText) {
+          history.push({ t: now, text: noteText });
+        } else {
+          const last = history[history.length - 1];
+          if (last && !last.created && !last.text && now - last.t < 60000) last.t = now;
+          else history.push({ t: now, text: '' });
+        }
+        const nextNote = {
+          ...note,
+          title: nextTitle,
+          content: nextContent,
+          updatedAt: now,
+          history,
+        };
+        applyDB({
+          ...dbRef.current,
+          notes: dbRef.current.notes.map((item) => (item.id === noteId ? nextNote : item)),
+        });
+        setUpdateNote('');
+        setDirty(false);
+        if (handlesRef.current.has(noteId)) {
+          void writeNoteFile(noteId, nextContent).then((written) => {
+            if (!written) notify(t('nbLinkSaveFail'), 'error');
+            else if (manual) notify(t('nbLinkSaved'));
+          });
+        } else if (manual) {
+          notify(t('nbSaved'));
+        }
+      }
+
+      function focusEditor(note) {
+        setTimeout(() => {
+          const element = note && note.content ? contentRef.current : titleRef.current;
+          if (element) element.focus();
+        }, 0);
+      }
+
+      function selectNote(id) {
+        if (id === noteId) return;
+        commitNote(false);
+        const note = noteById(id);
+        if (!note) return;
+        setNoteId(id);
+        setTitle(note.title || '');
+        setContent(note.content || '');
+        setUpdateNote('');
+        setDirty(false);
+        setHistoryOpen(false);
+        focusEditor(note);
+      }
+
+      function selectView(nextView) {
+        commitNote(false);
+        setView(nextView);
+        setNoteId(null);
+        setTitle('');
+        setContent('');
+        setUpdateNote('');
+        setDirty(false);
+        setHistoryOpen(false);
+        setSearch('');
+      }
+
+      function newNote() {
+        commitNote(false);
+        const groupId = activeGroups.some((group) => group.id === view) ? view : null;
+        if (view === 'archive') setView('all');
+        setSearch('');
+        const now = Date.now();
+        const note = {
+          id: notebookUid(),
+          groupId,
+          title: '',
+          content: '',
+          createdAt: now,
+          updatedAt: now,
+          archived: false,
+          linkedFileName: null,
+          history: [{ t: now, text: '', created: true }],
+        };
+        applyDB({ ...dbRef.current, notes: [...dbRef.current.notes, note] });
+        setNoteId(note.id);
+        setTitle('');
+        setContent('');
+        setUpdateNote('');
+        setDirty(false);
+        setHistoryOpen(false);
+        focusEditor(note);
+      }
+
+      function deleteNote(id) {
+        commitNote(false);
+        const note = noteById(id);
+        if (!note) return;
+        const index = dbRef.current.notes.indexOf(note);
+        const handle = handlesRef.current.get(id) || null;
+        undoRef.current.push({ note: cloneNote(note), index, handle });
+        if (undoRef.current.length > NOTE_UNDO_LIMIT) undoRef.current.shift();
+        handlesRef.current.delete(id);
+        applyDB({
+          ...dbRef.current,
+          notes: dbRef.current.notes.filter((item) => item.id !== id),
+        });
+        if (noteId === id) {
+          setNoteId(null);
+          setTitle('');
+          setContent('');
+          setUpdateNote('');
+          setDirty(false);
+        }
+        notify(t('nbDeleted'), 'ok', {
+          actionText: t('nbUndo'),
+          onAction: () => undoDelete(),
+          duration: 5200,
+        });
+      }
+
+      function undoDelete() {
+        const item = undoRef.current.pop();
+        if (!item) {
+          notify(t('nbNoUndo'), 'error');
+          return;
+        }
+        const note = item.note;
+        if (dbRef.current.notes.some((existing) => existing.id === note.id)) {
+          note.id = notebookUid();
+        }
+        if (note.groupId && !dbRef.current.groups.some((group) => group.id === note.groupId && !group.archived)) {
+          note.groupId = null;
+        }
+        const notes = dbRef.current.notes.slice();
+        notes.splice(Math.min(Math.max(0, item.index), notes.length), 0, note);
+        applyDB({ ...dbRef.current, notes });
+        if (item.handle) handlesRef.current.set(note.id, item.handle);
+        setView(note.archived ? 'archive' : note.groupId || 'all');
+        setSearch('');
+        setNoteId(note.id);
+        setTitle(note.title || '');
+        setContent(note.content || '');
+        setUpdateNote('');
+        setDirty(false);
+        setHistoryOpen(false);
+        notify(t('nbRestored'));
+      }
+
+      function toggleArchiveNote(id) {
+        commitNote(false);
+        const note = noteById(id);
+        if (!note) return;
+        const archived = !note.archived;
+        let groupId = note.groupId;
+        if (!archived && groupId) {
+          const group = groupById(groupId);
+          if (!group || group.archived) groupId = null;
+        }
+        const now = Date.now();
+        applyDB({
+          ...dbRef.current,
+          notes: dbRef.current.notes.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  archived,
+                  groupId,
+                  updatedAt: now,
+                  history: [
+                    ...item.history,
+                    { t: now, text: archived ? t('nbNoteArchived') : t('nbNoteRestored') },
+                  ],
+                }
+              : item,
+          ),
+        });
+        notify(archived ? t('nbNoteArchived') : t('nbNoteRestored'));
+      }
+
+      function canDropTo(targetView) {
+        return (
+          targetView === 'ungrouped' ||
+          (targetView !== 'all' &&
+            targetView !== 'archive' &&
+            activeGroups.some((group) => group.id === targetView))
+        );
+      }
+
+      function moveNote(id, groupId) {
+        commitNote(false);
+        const note = noteById(id);
+        if (!note) return;
+        if ((note.groupId || null) === (groupId || null) && !note.archived) {
+          notify(t('nbMoved'));
+          return;
+        }
+        const now = Date.now();
+        const group = groupId ? groupById(groupId) : null;
+        applyDB({
+          ...dbRef.current,
+          notes: dbRef.current.notes.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  groupId: group ? group.id : null,
+                  archived: false,
+                  updatedAt: now,
+                  history: [
+                    ...item.history,
+                    {
+                      t: now,
+                      text: (t('nbMoved') + ' · ' + (group ? group.name : t('nbNoGroup'))),
+                    },
+                  ],
+                }
+              : item,
+          ),
+        });
+        notify(group ? `${t('nbMoved')} · ${group.name}` : t('nbMoved'));
+      }
+
+      function openGroupDialog(mode, targetId) {
+        commitNote(false);
+        const group = targetId ? groupById(targetId) : null;
+        setDialog({
+          kind: 'group',
+          mode,
+          target: targetId || null,
+          value: mode === 'rename' && group ? group.name : '',
+          error: null,
+        });
+      }
+
+      function openGroupConfirm(action, targetId) {
+        commitNote(false);
+        const group = targetId ? groupById(targetId) : null;
+        const titles = {
+          'archive-group': t('nbArchiveGroup'),
+          'delete-group': t('nbDeleteGroup'),
+          'purge-group': t('nbPurgeGroup'),
+        };
+        const messages = {
+          'archive-group': t('nbConfirmArchiveGroup'),
+          'delete-group': t('nbConfirmDeleteGroup'),
+          'purge-group': t('nbConfirmPurgeGroup'),
+        };
+        setDialog({
+          kind: 'confirm',
+          action,
+          target: targetId,
+          title: titles[action] || t('nbConfirm'),
+          message: messages[action] || '',
+          groupName: group ? group.name : '',
+        });
+      }
+
+      function restoreGroup(id) {
+        commitNote(false);
+        const now = Date.now();
+        applyDB({
+          ...dbRef.current,
+          groups: dbRef.current.groups.map((group) =>
+            group.id === id ? { ...group, archived: false } : group,
+          ),
+          notes: dbRef.current.notes.map((note) =>
+            note.groupId === id
+              ? {
+                  ...note,
+                  archived: false,
+                  updatedAt: now,
+                  history: [...note.history, { t: now, text: t('nbGroupRestored') }],
+                }
+              : note,
+          ),
+        });
+        setView(id);
+        setNoteId(null);
+        setTitle('');
+        setContent('');
+        setDirty(false);
+        notify(t('nbGroupRestored'));
+      }
+
+      function closeDialog() {
+        setDialog(null);
+      }
+
+      function confirmDialogAction() {
+        if (!dialog) return;
+        if (dialog.kind === 'group') {
+          const value = String(dialog.value || '').trim();
+          if (!value) {
+            setDialog((current) => (current ? { ...current, error: t('nbNameEmpty') } : current));
+            return;
+          }
+          if (dialog.mode === 'create') {
+            const group = {
+              id: notebookUid(),
+              name: value,
+              createdAt: Date.now(),
+              archived: false,
+            };
+            applyDB({ ...dbRef.current, groups: [...dbRef.current.groups, group] });
+            setView(group.id);
+            setNoteId(null);
+            setTitle('');
+            setContent('');
+            setDirty(false);
+            notify(t('nbGroupCreated'));
+          } else {
+            applyDB({
+              ...dbRef.current,
+              groups: dbRef.current.groups.map((group) =>
+                group.id === dialog.target ? { ...group, name: value } : group,
+              ),
+            });
+            notify(t('nbRename'));
+          }
+          setDialog(null);
+          return;
+        }
+        const action = dialog.action;
+        const target = dialog.target;
+        setDialog(null);
+        if (action === 'archive-group') {
+          const now = Date.now();
+          applyDB({
+            ...dbRef.current,
+            groups: dbRef.current.groups.map((group) =>
+              group.id === target ? { ...group, archived: true } : group,
+            ),
+            notes: dbRef.current.notes.map((note) =>
+              note.groupId === target
+                ? {
+                    ...note,
+                    archived: true,
+                    updatedAt: now,
+                    history: [...note.history, { t: now, text: t('nbGroupArchived') }],
+                  }
+                : note,
+            ),
+          });
+          if (view === target) setView('all');
+          notify(t('nbGroupArchived'));
+        } else if (action === 'delete-group') {
+          applyDB({
+            ...dbRef.current,
+            groups: dbRef.current.groups.filter((group) => group.id !== target),
+            notes: dbRef.current.notes.map((note) =>
+              note.groupId === target ? { ...note, groupId: null } : note,
+            ),
+          });
+          if (view === target) setView('all');
+          notify(t('nbGroupDeleted'));
+        } else if (action === 'purge-group') {
+          const removedIds = new Set(
+            dbRef.current.notes
+              .filter((note) => note.groupId === target)
+              .map((note) => note.id),
+          );
+          applyDB({
+            ...dbRef.current,
+            groups: dbRef.current.groups.filter((group) => group.id !== target),
+            notes: dbRef.current.notes.filter((note) => !removedIds.has(note.id)),
+          });
+          if (noteId && removedIds.has(noteId)) {
+            setNoteId(null);
+            setTitle('');
+            setContent('');
+            setDirty(false);
+          }
+          setView('all');
+          notify(t('nbGroupDeleted'));
+        }
+      }
+
+      function exportBackup() {
+        commitNote(false);
+        const data = {
+          version: 1,
+          exportedAt: Date.now(),
+          groups: dbRef.current.groups,
+          notes: dbRef.current.notes,
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {
+          type: 'application/json;charset=utf-8',
+        });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `notes-backup-${noteDateFull(Date.now()).replace(/[: ]/g, '-')}.json`;
+        anchor.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        notify(t('nbExported'));
+      }
+
+      async function importBackup(file) {
+        commitNote(false);
+        try {
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          if (!parsed || !Array.isArray(parsed.notes)) throw new Error('invalid');
+          const groups = dbRef.current.groups.slice();
+          const groupIds = new Set(groups.map((group) => group.id));
+          (Array.isArray(parsed.groups) ? parsed.groups : []).forEach((group) => {
+            if (group && group.id && !groupIds.has(group.id)) {
+              groups.push({ ...group, archived: Boolean(group.archived) });
+              groupIds.add(group.id);
+            }
+          });
+          const notes = dbRef.current.notes.slice();
+          const noteIds = new Set(notes.map((note) => note.id));
+          parsed.notes.forEach((note) => {
+            if (note && note.id && !noteIds.has(note.id)) {
+              notes.push({
+                ...note,
+                archived: Boolean(note.archived),
+                linkedFileName: null,
+                history: Array.isArray(note.history) ? note.history : [],
+              });
+              noteIds.add(note.id);
+            }
+          });
+          applyDB({ ...dbRef.current, groups, notes });
+          setView('all');
+          notify(t('nbImported'));
+        } catch {
+          notify(t('nbImportFailed'), 'error');
+        }
+      }
+
+      async function linkNoteFile() {
+        if (!noteId) return;
+        commitNote(false);
+        if (!supportsNotebookFiles()) {
+          notify(t('nbLinkUnsupported'), 'error');
+          return;
+        }
+        try {
+          const [handle] = await window.showOpenFilePicker({
+            multiple: false,
+            excludeAcceptAllOption: false,
+            types: [
+              {
+                description: 'Text',
+                accept: {
+                  'text/plain': ['.txt', '.md', '.markdown', '.log', '.ini', '.cfg', '.json', '.csv', '.yml', '.yaml'],
+                  'text/html': ['.html', '.htm'],
+                },
+              },
+            ],
+          });
+          const file = await handle.getFile();
+          const note = noteById(noteId);
+          if (!note) return;
+          let text = '';
+          if (file.size <= 8 * 1024 * 1024) {
+            text = await file.text();
+          }
+          const now = Date.now();
+          const baseTitle = file.name.replace(/\.[^.]+$/, '');
+          const nextTitle = note.title || baseTitle;
+          const nextContent = !note.content.trim() && text ? text : note.content;
+          handlesRef.current.set(noteId, handle);
+          applyDB({
+            ...dbRef.current,
+            notes: dbRef.current.notes.map((item) =>
+              item.id === noteId
+                ? {
+                    ...item,
+                    title: nextTitle,
+                    content: nextContent,
+                    linkedFileName: file.name,
+                    updatedAt: now,
+                    history: [...item.history, { t: now, text: `${t('nbLinkedToast')} · ${file.name}` }],
+                  }
+                : item,
+            ),
+          });
+          setTitle(nextTitle);
+          if (nextContent !== content) setContent(nextContent);
+          setDirty(false);
+          notify(`${t('nbLinkedToast')} · ${file.name}`);
+        } catch (error) {
+          if (error && error.name !== 'AbortError') {
+            notify((error && error.message) || t('nbSaveFailed'), 'error');
+          }
+        }
+      }
+
+      async function unlinkNote() {
+        if (!noteId) return;
+        commitNote(false);
+        handlesRef.current.delete(noteId);
+        const now = Date.now();
+        applyDB({
+          ...dbRef.current,
+          notes: dbRef.current.notes.map((note) =>
+            note.id === noteId
+              ? {
+                  ...note,
+                  linkedFileName: null,
+                  updatedAt: now,
+                  history: [...note.history, { t: now, text: t('nbUnlinked') }],
+                }
+              : note,
+          ),
+        });
+        notify(t('nbUnlinked'));
+      }
+
+      async function saveNoteAsFile() {
+        if (!noteId) return;
+        commitNote(false);
+        if (!supportsNotebookFiles()) {
+          notify(t('nbLinkUnsupported'), 'error');
+          return;
+        }
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: notebookFileName(title),
+            types: [{ description: 'Text', accept: { 'text/plain': ['.txt', '.md'] } }],
+          });
+          const writable = await handle.createWritable();
+          await writable.write(content);
+          await writable.close();
+          handlesRef.current.set(noteId, handle);
+          const now = Date.now();
+          applyDB({
+            ...dbRef.current,
+            notes: dbRef.current.notes.map((note) =>
+              note.id === noteId
+                ? {
+                    ...note,
+                    linkedFileName: handle.name,
+                    updatedAt: now,
+                    history: [...note.history, { t: now, text: `${t('nbSaveAs')} · ${handle.name}` }],
+                  }
+                : note,
+            ),
+          });
+          notify(`${t('nbSaveAs')} · ${handle.name}`);
+        } catch (error) {
+          if (error && error.name !== 'AbortError') {
+            notify((error && error.message) || t('nbSaveFailed'), 'error');
+          }
+        }
+      }
+
+      async function importFiles(files, groupId) {
+        commitNote(false);
+        const textExts = [
+          '.txt', '.md', '.markdown', '.log', '.ini', '.cfg', '.conf', '.json',
+          '.csv', '.yaml', '.yml', '.xml', '.html', '.htm', '.js', '.ts',
+          '.py', '.css', '.rst', '.tex', '.sql', '.bat', '.sh', '.toml',
+        ];
+        const created = [];
+        for (const file of files) {
+          const name = file.name || 'file';
+          const dot = name.lastIndexOf('.');
+          const ext = dot > 0 ? name.slice(dot).toLowerCase() : '';
+          let body = '';
+          if (file.size > 5 * 1024 * 1024) {
+            body = `【文件过大，仅记录文件信息】\n\n原始文件名：${name}\n大小：${(file.size / 1024 / 1024).toFixed(2)} MB`;
+          } else if (textExts.includes(ext) || (file.type && file.type.startsWith('text/'))) {
+            try {
+              body = await file.text();
+            } catch {
+              body = `【无法读取文件内容】\n\n原始文件名：${name}`;
+            }
+          } else {
+            body = `【已记录文件信息，未读取内容】\n\n原始文件名：${name}\n大小：${(file.size / 1024).toFixed(1)} KB\n类型：${file.type || ext || '未知'}`;
+          }
+          const now = Date.now();
+          created.push({
+            id: notebookUid(),
+            groupId: groupId || null,
+            title: dot > 0 ? name.slice(0, dot) : name,
+            content: body,
+            createdAt: now,
+            updatedAt: now,
+            archived: false,
+            linkedFileName: null,
+            history: [{ t: now, text: `${t('nbFileImported')} · ${name}`, created: true }],
+          });
+        }
+        if (!created.length) return;
+        applyDB({ ...dbRef.current, notes: [...dbRef.current.notes, ...created] });
+        const last = created[created.length - 1];
+        setView(groupId || 'all');
+        setSearch('');
+        setNoteId(last.id);
+        setTitle(last.title);
+        setContent(last.content);
+        setUpdateNote('');
+        setDirty(false);
+        setHistoryOpen(false);
+        notify(`${t('nbFileImported')} · ${created.length}`);
+      }
+
+      function handleRootDrop(event) {
+        if (!event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files.length) return;
+        event.preventDefault();
+        setFileDrag(false);
+        let groupId = activeGroups.some((group) => group.id === view) ? view : null;
+        const navTarget = event.target.closest && event.target.closest('.nt-nav-item');
+        if (navTarget) {
+          const targetView = navTarget.getAttribute('data-view');
+          if (targetView === 'ungrouped') groupId = null;
+          else if (targetView === 'all' || targetView === 'archive') groupId = null;
+          else if (targetView && activeGroups.some((group) => group.id === targetView)) groupId = targetView;
+        }
+        void importFiles(Array.from(event.dataTransfer.files), groupId);
+      }
+
+      function handleRootDragOver(event) {
+        const types = event.dataTransfer && event.dataTransfer.types;
+        if (!types || Array.prototype.indexOf.call(types, 'Files') === -1) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+        if (!fileDrag) setFileDrag(true);
+      }
+
+      function handleRootDragLeave(event) {
+        if (event.currentTarget.contains(event.relatedTarget)) return;
+        setFileDrag(false);
+      }
+
+      function handleDialogKeyDown(event) {
+        event.stopPropagation();
+        if (event.isComposing) return;
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          closeDialog();
+        } else if (event.key === 'Enter') {
+          event.preventDefault();
+          confirmDialogAction();
+        }
+      }
+
+      const activeGroups = useMemo(() => db.groups.filter((group) => !group.archived), [db]);
+      const archivedGroups = useMemo(() => db.groups.filter((group) => group.archived), [db]);
+
+      const visibleNotes = useMemo(() => {
+        const query = search.trim().toLowerCase();
+        let notes = db.notes.slice();
+        if (query) {
+          notes = notes.filter((note) => !note.archived).filter(
+            (note) =>
+              (note.title || '').toLowerCase().includes(query) ||
+              (note.content || '').toLowerCase().includes(query) ||
+              note.history.some((entry) => (entry.text || '').toLowerCase().includes(query)) ||
+              noteDateFull(note.createdAt).includes(query) ||
+              noteDateFull(note.updatedAt).includes(query),
+          );
+        } else if (view === 'archive') {
+          notes = notes.filter((note) => note.archived);
+        } else {
+          notes = notes.filter((note) => !note.archived);
+          if (view === 'ungrouped') {
+            notes = notes.filter(
+              (note) =>
+                !note.groupId ||
+                !db.groups.some((group) => group.id === note.groupId && !group.archived),
+            );
+          } else if (view !== 'all') notes = notes.filter((note) => note.groupId === view);
+        }
+        return notes.sort((left, right) => right.updatedAt - left.updatedAt);
+      }, [db, search, view]);
+
+      const selectedNote = noteId ? db.notes.find((note) => note.id === noteId) || null : null;
+      const selectedGroup = selectedNote && selectedNote.groupId ? groupById(selectedNote.groupId) : null;
+      const linkedHandle = noteId ? handlesRef.current.get(noteId) : null;
+
+      const viewLabel = useMemo(() => {
+        const query = search.trim();
+        if (query) return `${t('nbSearchPrefix')}「${query}」`;
+        if (view === 'all') return t('nbAll');
+        if (view === 'ungrouped') return t('nbUngrouped');
+        if (view === 'archive') return t('nbArchive');
+        const group = db.groups.find((item) => item.id === view);
+        return group ? group.name : t('nbAll');
+      }, [db.groups, search, t, view]);
+
+      useEffect(() => {
+        if (!notice) return;
+        const timer = setTimeout(() => setNotice(null), notice.duration || 2600);
+        return () => clearTimeout(timer);
+      }, [notice]);
+
+      useEffect(() => {
+        if (!dirty || !noteId) return;
+        const timer = setTimeout(() => commitNote(false), 1500);
+        return () => clearTimeout(timer);
+      }, [title, content, updateNote, dirty, noteId]);
+
+      useEffect(() => {
+        const onKeyDown = (event) => {
+          const modifier = event.ctrlKey || event.metaKey;
+          if (!modifier) return;
+          const key = String(event.key || '').toLowerCase();
+          if (key === 's') {
+            event.preventDefault();
+            if (noteId) commitNote(true);
+            return;
+          }
+          if (key === 'z' && !event.shiftKey) {
+            const target = event.target;
+            const editing =
+              target &&
+              (target.tagName === 'INPUT' ||
+                target.tagName === 'TEXTAREA' ||
+                target.isContentEditable);
+            if (editing) return;
+            if (undoRef.current.length) {
+              event.preventDefault();
+              undoDelete();
+            }
+          }
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+      }, [noteId, title, content, updateNote, dirty]);
+
+      useEffect(
+        () => () => {
+          const latest = latestRef.current;
+          if (!latest || !latest.noteId || !latest.dirty) return;
+          const note = dbRef.current.notes.find((item) => item.id === latest.noteId);
+          if (!note) return;
+          const now = Date.now();
+          const history = note.history.slice();
+          const noteText = latest.updateNote.trim();
+          if (noteText) history.push({ t: now, text: noteText });
+          else {
+            const last = history[history.length - 1];
+            if (last && !last.created && !last.text && now - last.t < 60000) last.t = now;
+            else history.push({ t: now, text: '' });
+          }
+          const next = {
+            ...dbRef.current,
+            notes: dbRef.current.notes.map((item) =>
+              item.id === latest.noteId
+                ? {
+                    ...item,
+                    title: latest.title.trim(),
+                    content: latest.content,
+                    updatedAt: now,
+                    history,
+                  }
+                : item,
+            ),
+          };
+          persistNotebook(next);
+          if (handlesRef.current.has(latest.noteId)) {
+            void writeNoteFile(latest.noteId, latest.content);
+          }
+        },
+        [],
+      );
+
+      const navItem = (key, icon, label, count, extra, dropKey) =>
+        h(
+          'div',
+          {
+            key,
+            role: 'button',
+            tabIndex: 0,
+            'data-view': key,
+            className:
+              'nt-nav-item' +
+              (view === key ? ' is-active' : '') +
+              (dropKey && dropTarget === dropKey ? ' is-drop' : ''),
+            onClick: () => selectView(key),
+            onKeyDown: (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectView(key);
+              }
+            },
+            onDragOver: dropKey
+              ? (event) => {
+                  if (!draggingId || !canDropTo(dropKey)) return;
+                  event.preventDefault();
+                  event.dataTransfer.dropEffect = 'move';
+                  setDropTarget(dropKey);
+                }
+              : undefined,
+            onDragLeave: dropKey
+              ? () => {
+                  if (dropTarget === dropKey) setDropTarget(null);
+                }
+              : undefined,
+            onDrop: dropKey
+              ? (event) => {
+                  if (!draggingId || !canDropTo(dropKey)) return;
+                  event.preventDefault();
+                  event.stopPropagation();
+                  const id = draggingId;
+                  setDraggingId(null);
+                  setDropTarget(null);
+                  moveNote(id, dropKey === 'ungrouped' ? null : dropKey);
+                }
+              : undefined,
+          },
+          h(Glyph, { name: icon }),
+          h('span', { className: 'nt-nav-label' }, label),
+          h('span', { className: 'nt-nav-count' }, count),
+          extra || null,
+        );
+
+      const noteCard = (note) => {
+        const group = note.groupId ? groupById(note.groupId) : null;
+        const preview = (note.content || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+        return h(
+          'div',
+          {
+            key: note.id,
+            className:
+              'nt-card' +
+              (noteId === note.id ? ' is-active' : '') +
+              (draggingId === note.id ? ' is-dragging' : ''),
+            draggable: true,
+            onClick: () => selectNote(note.id),
+            onDragStart: (event) => {
+              setDraggingId(note.id);
+              event.dataTransfer.effectAllowed = 'move';
+              try {
+                event.dataTransfer.setData('text/plain', 'note:' + note.id);
+              } catch {
+                /* ignore */
+              }
+            },
+            onDragEnd: () => {
+              setDraggingId(null);
+              setDropTarget(null);
+            },
+          },
+          h(
+            'div',
+            { className: 'nt-card-tools' },
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'nt-mini',
+                title: note.archived ? t('nbRestore') : t('nbArchiveNote'),
+                draggable: false,
+                onPointerDown: (event) => event.stopPropagation(),
+                onClick: (event) => {
+                  event.stopPropagation();
+                  toggleArchiveNote(note.id);
+                },
+              },
+              h(Glyph, { name: 'archive' }),
+            ),
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'nt-mini nt-danger',
+                title: t('nbDelete'),
+                draggable: false,
+                onPointerDown: (event) => event.stopPropagation(),
+                onClick: (event) => {
+                  event.stopPropagation();
+                  deleteNote(note.id);
+                },
+              },
+              h(Glyph, { name: 'trash' }),
+            ),
+          ),
+          h('h3', null, note.title || t('nbUntitled')),
+          h('p', { className: 'nt-card-preview' }, preview || t('nbBlank')),
+          h(
+            'div',
+            { className: 'nt-card-meta' },
+            h('span', null, '✎ ' + noteDateShort(note.updatedAt)),
+            group ? h('span', { className: 'nt-tag' }, group.name) : null,
+            note.archived ? h('span', { className: 'nt-tag nt-tag-arch' }, t('nbArchivedTag')) : null,
+            note.linkedFileName
+              ? h('span', { className: 'nt-tag nt-tag-link' }, '🔗 ' + note.linkedFileName)
+              : null,
+          ),
+        );
+      };
+
+      const archivedGroupRows = archivedGroups.length
+        ? h(
+            'div',
+            { className: 'nt-arch-groups' },
+            h('div', { className: 'nt-arch-title' }, t('nbGroups') + ' · ' + t('nbArchive')),
+            archivedGroups.map((group) => {
+              const count = db.notes.filter((note) => note.groupId === group.id).length;
+              return h(
+                'div',
+                { className: 'nt-arch-item', key: group.id },
+                h(Glyph, { name: 'folder' }),
+                h('span', { className: 'nt-arch-name' }, group.name),
+                h('span', { className: 'nt-nav-count' }, count),
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'nt-mini',
+                    title: t('nbRestoreGroup'),
+                    onClick: () => restoreGroup(group.id),
+                  },
+                  h(Glyph, { name: 'refresh' }),
+                ),
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'nt-mini nt-danger',
+                    title: t('nbPurgeGroup'),
+                    onClick: () => openGroupConfirm('purge-group', group.id),
+                  },
+                  h(Glyph, { name: 'trash' }),
+                ),
+              );
+            }),
+          )
+        : null;
+
+      const editor = selectedNote
+        ? (() => {
+            const history = selectedNote.history.slice().reverse();
+            const linked = Boolean(linkedHandle);
+            return h(
+              'main',
+              { className: 'nt-editor' },
+              selectedNote.archived
+                ? h(
+                    'div',
+                    { className: 'nt-banner nt-banner-arch' },
+                    h('span', null, t('nbArchivedBanner')),
+                    h(
+                      'button',
+                      {
+                        type: 'button',
+                        className: 'nt-btn nt-btn-sm',
+                        onClick: () => toggleArchiveNote(selectedNote.id),
+                      },
+                      t('nbRestore'),
+                    ),
+                  )
+                : null,
+              selectedNote.linkedFileName
+                ? h(
+                    'div',
+                    {
+                      className:
+                        'nt-banner ' + (linked ? 'nt-banner-link' : 'nt-banner-warn'),
+                    },
+                    h(
+                      'span',
+                      { className: 'nt-banner-text' },
+                      linked
+                        ? `${t('nbLinked')} · ${selectedNote.linkedFileName}`
+                        : `${t('nbLinkLost')} · ${selectedNote.linkedFileName}`,
+                    ),
+                    linked
+                      ? h('span', { className: 'nt-banner-hint' }, t('nbLinkedHint'))
+                      : null,
+                    h(
+                      'button',
+                      {
+                        type: 'button',
+                        className: 'nt-btn nt-btn-sm',
+                        onClick: linked ? unlinkNote : linkNoteFile,
+                      },
+                      linked ? t('nbUnlink') : t('nbRelink'),
+                    ),
+                  )
+                : null,
+              h(
+                'div',
+                { className: 'nt-editor-head' },
+                h('input', {
+                  ref: titleRef,
+                  className: 'nt-title-input',
+                  value: title,
+                  placeholder: t('nbUntitled'),
+                  onChange: (event) => {
+                    setTitle(event.target.value);
+                    setDirty(true);
+                  },
+                }),
+                h(
+                  'div',
+                  { className: 'nt-editor-actions' },
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'nt-btn nt-btn-sm',
+                      onClick: () => toggleArchiveNote(selectedNote.id),
+                    },
+                    h(Glyph, { name: 'archive' }),
+                    selectedNote.archived ? t('nbRestore') : t('nbArchiveNote'),
+                  ),
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'nt-btn nt-btn-sm nt-danger',
+                      onClick: () => deleteNote(selectedNote.id),
+                    },
+                    h(Glyph, { name: 'trash' }),
+                    t('nbDelete'),
+                  ),
+                ),
+              ),
+              h(
+                'div',
+                { className: 'nt-editor-meta' },
+                h('span', null, t('nbCreated') + ' · ' + noteDateFull(selectedNote.createdAt)),
+                h('span', null, t('nbUpdated') + ' · ' + noteDateFull(selectedNote.updatedAt)),
+                h('span', null, Math.max(0, selectedNote.history.length - 1) + ' ' + t('nbUpdates')),
+                h('span', null, selectedGroup ? selectedGroup.name : t('nbNoGroup')),
+                h('span', { className: 'nt-dirty' + (dirty ? '' : ' is-clean') }, dirty ? t('nbDirty') : t('nbSaved')),
+              ),
+              h('textarea', {
+                ref: contentRef,
+                className: 'nt-content',
+                value: content,
+                placeholder: t('nbContent'),
+                spellCheck: false,
+                onChange: (event) => {
+                  setContent(event.target.value);
+                  setDirty(true);
+                },
+              }),
+              h(
+                'div',
+                { className: 'nt-editor-foot' },
+                h(
+                  'div',
+                  { className: 'nt-file-actions' },
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'nt-btn nt-btn-sm' + (linked ? ' nt-btn-linked' : ''),
+                      onClick: linked ? unlinkNote : linkNoteFile,
+                      title: linked ? t('nbUnlink') : t('nbLink'),
+                    },
+                    h(Glyph, { name: 'link' }),
+                    linked ? selectedNote.linkedFileName : t('nbLink'),
+                  ),
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'nt-btn nt-btn-sm',
+                      onClick: saveNoteAsFile,
+                    },
+                    h(Glyph, { name: 'save' }),
+                    t('nbSaveAs'),
+                  ),
+                ),
+                h('input', {
+                  className: 'nt-update-input',
+                  value: updateNote,
+                  placeholder: t('nbUpdateNote'),
+                  onChange: (event) => {
+                    setUpdateNote(event.target.value);
+                    setDirty(true);
+                  },
+                }),
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'nt-btn nt-btn-primary',
+                    onClick: () => commitNote(true),
+                  },
+                  t('nbSave'),
+                ),
+              ),
+              h(
+                'div',
+                { className: 'nt-history' },
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'nt-history-toggle' + (historyOpen ? ' is-open' : ''),
+                    onClick: () => setHistoryOpen((open) => !open),
+                  },
+                  h(Glyph, { name: 'chevron' }),
+                  t('nbHistory'),
+                  h('span', { className: 'nt-count' }, selectedNote.history.length),
+                ),
+                historyOpen
+                  ? h(
+                      'div',
+                      { className: 'nt-history-body' },
+                      history.map((entry, index) => {
+                        const isFile = /文件|另存为|关联/.test(entry.text || '');
+                        return h(
+                          'div',
+                          { className: 'nt-history-item', key: String(entry.t) + '-' + index },
+                          h('span', { className: 'nt-history-dot' }),
+                          h(
+                            'div',
+                            { className: 'nt-history-content' },
+                            h(
+                              'div',
+                              { className: 'nt-history-time' },
+                              noteDateFull(entry.t),
+                              entry.created
+                                ? h('span', { className: 'nt-history-badge' }, t('nbHistoryCreated'))
+                                : null,
+                              isFile
+                                ? h('span', { className: 'nt-history-badge is-file' }, t('nbHistoryFile'))
+                                : null,
+                            ),
+                            entry.text
+                              ? h('div', { className: 'nt-history-text' }, entry.text)
+                              : null,
+                          ),
+                        );
+                      }),
+                    )
+                  : null,
+              ),
+            );
+          })()
+        : h(
+            'main',
+            { className: 'nt-editor nt-editor-empty' },
+            h('div', { className: 'nt-empty-icon' }, h(Glyph, { name: 'notebook' })),
+            h('p', null, t('nbNoNote')),
+            h('p', { className: 'nt-empty-hint' }, t('nbNoNoteHint')),
+          );
+
+      return h(
+        'div',
+        {
+          className: 'nt-root',
+          onDragOver: handleRootDragOver,
+          onDragEnter: handleRootDragOver,
+          onDragLeave: handleRootDragLeave,
+          onDrop: handleRootDrop,
+        },
+        h(
+          'aside',
+          { className: 'nt-nav' },
+          h(
+            'div',
+            { className: 'nt-nav-head' },
+            h('span', { className: 'nt-nav-mark' }, h(Glyph, { name: 'notebook' })),
+            h('div', null, h('strong', null, t('notebook')), h('span', { className: 'nt-nav-subtitle' }, t('appSubtitle'))),
+          ),
+          h(
+            'div',
+            { className: 'nt-nav-list' },
+            navItem('all', 'note', t('nbAll'), db.notes.filter((note) => !note.archived).length, null, null),
+            navItem(
+              'ungrouped',
+              'doc',
+              t('nbUngrouped'),
+              db.notes.filter((note) => !note.archived && (!note.groupId || !activeGroups.some((group) => group.id === note.groupId))).length,
+              null,
+              'ungrouped',
+            ),
+            h('div', { className: 'nt-nav-sep' }, t('nbGroups')),
+            activeGroups.length
+              ? activeGroups.map((group) =>
+                  navItem(
+                    group.id,
+                    'folder',
+                    group.name,
+                    db.notes.filter((note) => !note.archived && note.groupId === group.id).length,
+                    h(
+                      'span',
+                      { className: 'nt-nav-tools' },
+                      h(
+                        'button',
+                        {
+                          type: 'button',
+                          className: 'nt-mini',
+                          title: t('nbRename'),
+                          onPointerDown: (event) => event.stopPropagation(),
+                          onClick: (event) => {
+                            event.stopPropagation();
+                            openGroupDialog('rename', group.id);
+                          },
+                        },
+                        h(Glyph, { name: 'text' }),
+                      ),
+                      h(
+                        'button',
+                        {
+                          type: 'button',
+                          className: 'nt-mini',
+                          title: t('nbArchiveGroup'),
+                          onPointerDown: (event) => event.stopPropagation(),
+                          onClick: (event) => {
+                            event.stopPropagation();
+                            openGroupConfirm('archive-group', group.id);
+                          },
+                        },
+                        h(Glyph, { name: 'archive' }),
+                      ),
+                      h(
+                        'button',
+                        {
+                          type: 'button',
+                          className: 'nt-mini nt-danger',
+                          title: t('nbDeleteGroup'),
+                          onPointerDown: (event) => event.stopPropagation(),
+                          onClick: (event) => {
+                            event.stopPropagation();
+                            openGroupConfirm('delete-group', group.id);
+                          },
+                        },
+                        h(Glyph, { name: 'trash' }),
+                      ),
+                    ),
+                    group.id,
+                  ),
+                )
+              : h('div', { className: 'nt-nav-empty' }, t('nbEmpty')),
+            h('div', { className: 'nt-nav-sep' }, ''),
+            navItem('archive', 'archive', t('nbArchive'), db.notes.filter((note) => note.archived).length, null, null),
+          ),
+          h(
+            'div',
+            { className: 'nt-nav-foot' },
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'nt-btn nt-btn-block',
+                onClick: () => openGroupDialog('create', null),
+              },
+              '＋ ' + t('nbNewGroup'),
+            ),
+            h(
+              'div',
+              { className: 'nt-foot-row' },
+              h(
+                'button',
+                { type: 'button', className: 'nt-btn nt-btn-sm', onClick: exportBackup },
+                t('nbExport'),
+              ),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'nt-btn nt-btn-sm',
+                  onClick: () => importRef.current && importRef.current.click(),
+                },
+                t('nbImport'),
+              ),
+            ),
+            h(
+              'div',
+              { className: 'nt-undo-hint' },
+              undoRef.current.length
+                ? `${t('nbUndo')} · ${undoRef.current.length} · Ctrl+Z`
+                : t('nbUndoEmpty'),
+            ),
+            h('input', {
+              ref: importRef,
+              type: 'file',
+              accept: 'application/json,.json',
+              hidden: true,
+              onChange: (event) => {
+                const file = event.target.files && event.target.files[0];
+                event.target.value = '';
+                if (file) void importBackup(file);
+              },
+            }),
+          ),
+        ),
+        h(
+          'section',
+          { className: 'nt-list' },
+          h(
+            'div',
+            { className: 'nt-list-head' },
+            h('input', {
+              className: 'nt-search',
+              value: search,
+              placeholder: t('nbSearch'),
+              onChange: (event) => setSearch(event.target.value),
+            }),
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'nt-add',
+                title: t('nbNewNote'),
+                onClick: newNote,
+              },
+              h(Glyph, { name: 'plus' }),
+            ),
+          ),
+          h(
+            'div',
+            { className: 'nt-list-title' },
+            h('span', null, viewLabel + ' · ' + visibleNotes.length),
+            h('span', { className: 'nt-list-tip' }, t('nbDragTip')),
+          ),
+          h(
+            'div',
+            { className: 'nt-note-list' },
+            view === 'archive' && !search.trim() ? archivedGroupRows : null,
+            visibleNotes.length
+              ? visibleNotes.map(noteCard)
+              : h(
+                  'div',
+                  { className: 'nt-empty-list' },
+                  h('div', null, t('nbEmpty')),
+                  h('span', null, t('nbEmptyHint')),
+                ),
+          ),
+        ),
+        editor,
+        notice
+          ? h(
+              'div',
+              {
+                className: 'nt-toast' + (notice.tone === 'error' ? ' is-error' : ''),
+                key: notice.key,
+                role: 'status',
+              },
+              h('span', { className: 'nt-toast-text' }, notice.text),
+              notice.actionText
+                ? h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'nt-toast-action',
+                      onClick: () => {
+                        const action = notice.onAction;
+                        setNotice(null);
+                        if (action) action();
+                      },
+                    },
+                    notice.actionText,
+                  )
+                : null,
+            )
+          : null,
+        dialog
+          ? h(
+              'div',
+              {
+                className: 'nt-modal-backdrop',
+                onPointerDown: (event) => {
+                  if (event.target === event.currentTarget) closeDialog();
+                },
+              },
+              h(
+                'div',
+                {
+                  className: 'nt-modal',
+                  role: 'dialog',
+                  'aria-modal': 'true',
+                  'aria-labelledby': 'nt-dialog-title',
+                },
+                h(
+                  'h3',
+                  { className: 'nt-modal-title', id: 'nt-dialog-title' },
+                  dialog.kind === 'group'
+                    ? dialog.mode === 'create'
+                      ? t('nbNewGroup')
+                      : t('nbGroupRename')
+                    : dialog.title,
+                ),
+                dialog.kind === 'group'
+                  ? h('input', {
+                      className: 'nt-modal-input',
+                      value: dialog.value,
+                      autoFocus: true,
+                      spellCheck: false,
+                      placeholder: t('nbGroupPrompt'),
+                      onChange: (event) =>
+                        setDialog((current) =>
+                          current
+                            ? { ...current, value: event.target.value, error: null }
+                            : current,
+                        ),
+                      onKeyDown: handleDialogKeyDown,
+                    })
+                  : h('p', { className: 'nt-modal-message' }, dialog.message),
+                dialog.error ? h('div', { className: 'nt-modal-error' }, dialog.error) : null,
+                h(
+                  'div',
+                  { className: 'nt-modal-actions' },
+                  h(
+                    'button',
+                    { type: 'button', className: 'nt-btn', onClick: closeDialog },
+                    t('nbCancel'),
+                  ),
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'nt-btn nt-btn-primary',
+                      onClick: confirmDialogAction,
+                    },
+                    t('nbConfirm'),
+                  ),
+                ),
+              ),
+            )
+          : null,
+        fileDrag
+          ? h(
+              'div',
+              { className: 'nt-drop-overlay' },
+              h('div', { className: 'nt-drop-card' }, t('nbDropHint')),
+            )
+          : null,
+      );
+    }
+
+    function EditorPage({ t, rpc, pickDirectory, embedded }) {
       const [nodes, setNodes] = useState(() => loadDoc());
       const [past, setPast] = useState([]);
       const [future, setFuture] = useState([]);
@@ -2070,7 +3878,7 @@ window.__ModuleLoader__.load({
 
       return h(
         'div',
-        { className: 'mte-root', ref: rootRef },
+        { className: 'mte-root' + (embedded ? ' mte-embedded' : ''), ref: rootRef },
         h('style', null, CSS),
         h(
           'header',
@@ -2524,6 +4332,141 @@ window.__ModuleLoader__.load({
               ),
             )
           : null,
+      );
+    }
+
+    function AppPage({ t, rpc, pickDirectory }) {
+      const [view, setView] = useState(() => {
+        try {
+          return localStorage.getItem(APP_VIEW_KEY) === 'tree' ? 'tree' : 'notes';
+        } catch {
+          return 'notes';
+        }
+      });
+      const [menuOpen, setMenuOpen] = useState(false);
+      const [toolsOpen, setToolsOpen] = useState(false);
+      const menuRef = useRef(null);
+
+      useEffect(() => {
+        try {
+          localStorage.setItem(APP_VIEW_KEY, view);
+        } catch {
+          /* storage may be unavailable */
+        }
+      }, [view]);
+
+      useEffect(() => {
+        if (!menuOpen) return;
+        const onPointerDown = (event) => {
+          if (menuRef.current && !menuRef.current.contains(event.target)) setMenuOpen(false);
+        };
+        const onKeyDown = (event) => {
+          if (event.key === 'Escape') setMenuOpen(false);
+        };
+        document.addEventListener('pointerdown', onPointerDown);
+        document.addEventListener('keydown', onKeyDown);
+        return () => {
+          document.removeEventListener('pointerdown', onPointerDown);
+          document.removeEventListener('keydown', onKeyDown);
+        };
+      }, [menuOpen]);
+
+      const chooseView = (next) => {
+        setView(next);
+        setMenuOpen(false);
+      };
+
+      return h(
+        'div',
+        { className: 'nt-app' },
+        h('style', null, APP_CSS),
+        h(
+          'header',
+          { className: 'nt-app-head' },
+          h(
+            'div',
+            { className: 'nt-app-brand' },
+            h('div', { className: 'nt-app-mark' }, h(Glyph, { name: 'notebook' })),
+            h(
+              'div',
+              { className: 'nt-app-brand-text' },
+              h('h1', null, t('appTitle')),
+              h('p', null, t('appSubtitle')),
+            ),
+          ),
+          h(
+            'div',
+            { className: 'nt-app-actions', ref: menuRef },
+            h(
+              'span',
+              { className: 'nt-app-current' },
+              view === 'tree' ? t('tools') + ' / ' + t('menuTree') : t('notebook'),
+            ),
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'nt-menu-btn' + (menuOpen ? ' is-open' : ''),
+                onClick: () => {
+                  setMenuOpen((open) => !open);
+                  if (!menuOpen) setToolsOpen(false);
+                },
+              },
+              h(Glyph, { name: 'menu' }),
+              h('span', null, t('advancedMenu')),
+              h(Glyph, { name: 'chevron' }),
+            ),
+            menuOpen
+              ? h(
+                  'div',
+                  { className: 'nt-menu-pop' },
+                  h('div', { className: 'nt-menu-title' }, t('advancedMenu')),
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'nt-menu-entry' + (view === 'notes' ? ' is-active' : ''),
+                      onClick: () => chooseView('notes'),
+                    },
+                    h(Glyph, { name: 'notebook' }),
+                    h('span', null, t('notebook')),
+                    view === 'notes' ? h(Glyph, { name: 'check' }) : null,
+                  ),
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: 'nt-menu-group' + (toolsOpen ? ' is-open' : ''),
+                      onClick: () => setToolsOpen((open) => !open),
+                    },
+                    h(Glyph, { name: 'layout' }),
+                    h('span', null, t('tools')),
+                    h(Glyph, { name: 'chevron' }),
+                  ),
+                  toolsOpen
+                    ? h(
+                        'button',
+                        {
+                          type: 'button',
+                          className: 'nt-menu-entry nt-menu-sub' + (view === 'tree' ? ' is-active' : ''),
+                          onClick: () => chooseView('tree'),
+                        },
+                        h(Glyph, { name: 'branch' }),
+                        h('span', null, t('menuTree')),
+                        view === 'tree' ? h(Glyph, { name: 'check' }) : null,
+                      )
+                    : null,
+                )
+              : null,
+          ),
+        ),
+        h(
+          'div',
+          { className: 'nt-app-body' + (view === 'tree' ? ' is-tree' : '') },
+          view === 'tree'
+            ? h(EditorPage, { t, rpc, pickDirectory, embedded: true })
+            : h(NotebookPage, { t }),
+        ),
       );
     }
 
@@ -3049,6 +4992,812 @@ window.__ModuleLoader__.load({
 `;
 
     /* ------------------------------------------------------------------ */
+    /* App and notebook styles                                             */
+    /* ------------------------------------------------------------------ */
+
+    const APP_CSS = `
+.nt-app {
+  display: flex;
+  flex-direction: column;
+  height: clamp(620px, calc(100vh - 120px), 1600px);
+  min-height: 0;
+  padding: 16px 20px 14px;
+  box-sizing: border-box;
+  color: var(--dsw-alias-label-primary);
+  font-size: 13px;
+}
+.nt-app-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 2px 12px;
+  flex: none;
+}
+.nt-app-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.nt-app-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: 1px solid color-mix(in srgb, var(--dsw-alias-brand-primary) 30%, var(--dsw-alias-border-l1));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 14%, var(--dsw-alias-bg-layer-2));
+  color: var(--dsw-alias-brand-primary);
+}
+.nt-app-mark svg { width: 20px; height: 20px; }
+.nt-app-brand-text { min-width: 0; }
+.nt-app-brand-text h1 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.25;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+.nt-app-brand-text p {
+  margin: 2px 0 0;
+  font-size: 10.5px;
+  color: var(--dsw-alias-label-secondary);
+}
+.nt-app-actions { position: relative; display: flex; align-items: center; gap: 9px; }
+.nt-app-current {
+  padding: 3px 9px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+.nt-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 9px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nt-menu-btn:hover, .nt-menu-btn.is-open {
+  border-color: color-mix(in srgb, var(--dsw-alias-brand-primary) 35%, var(--dsw-alias-border-l1));
+  background: var(--dsw-alias-bg-layer-1);
+}
+.nt-menu-btn svg:last-child { transition: transform 0.12s ease; }
+.nt-menu-btn.is-open svg:last-child { transform: rotate(180deg); }
+.nt-menu-pop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 40;
+  width: 240px;
+  padding: 7px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 12px;
+  background: var(--dsw-alias-bg-overlay);
+  box-shadow: 0 20px 50px -24px rgba(15, 23, 42, 0.55);
+}
+.nt-menu-title {
+  padding: 4px 8px 6px;
+  font-size: 9.5px;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--dsw-alias-label-secondary);
+}
+.nt-menu-entry, .nt-menu-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  height: 34px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.nt-menu-entry:hover, .nt-menu-group:hover { background: var(--dsw-alias-bg-layer-2); }
+.nt-menu-entry.is-active {
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 12%, transparent);
+  color: var(--dsw-alias-brand-primary);
+}
+.nt-menu-entry svg:last-child, .nt-menu-group svg:last-child { margin-left: auto; }
+.nt-menu-group svg:last-child { transition: transform 0.12s ease; }
+.nt-menu-group.is-open svg:last-child { transform: rotate(180deg); }
+.nt-menu-entry.nt-menu-sub {
+  padding-left: 28px;
+  color: var(--dsw-alias-label-secondary);
+}
+.nt-menu-entry.nt-menu-sub.is-active { color: var(--dsw-alias-brand-primary); }
+.nt-app-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 11px;
+  border-top: 1px solid var(--dsw-alias-border-l1);
+}
+.nt-app-body.is-tree { overflow-y: auto; }
+.mte-root.mte-embedded { padding: 12px 16px 8px; gap: 9px; }
+.mte-embedded .mte-title { font-size: 16px; }
+.mte-embedded .mte-subtitle { display: none; }
+.mte-embedded .mte-canvas { height: clamp(360px, calc(100vh - 430px), 1200px); }
+
+.nt-root {
+  position: relative;
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 14px;
+  background: var(--dsw-alias-bg-base);
+}
+.nt-nav {
+  display: flex;
+  flex-direction: column;
+  width: 216px;
+  flex: 0 0 216px;
+  min-height: 0;
+  border-right: 1px solid var(--dsw-alias-border-l1);
+  background: var(--dsw-alias-bg-layer-2);
+}
+.nt-nav-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 12px 10px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  min-width: 0;
+}
+.nt-nav-mark {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  flex: none;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-brand-primary);
+}
+.nt-nav-mark svg { width: 15px; height: 15px; }
+.nt-nav-head strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nt-nav-subtitle {
+  display: block;
+  font-size: 9.5px;
+  color: var(--dsw-alias-label-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nt-nav-list { flex: 1; min-height: 0; overflow-y: auto; padding: 7px; }
+.nt-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+.nt-nav-item:hover { background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-primary); }
+.nt-nav-item.is-active {
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 12%, transparent);
+  color: var(--dsw-alias-brand-primary);
+}
+.nt-nav-item.is-drop {
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 16%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--dsw-alias-brand-primary);
+  color: var(--dsw-alias-brand-primary);
+}
+.nt-nav-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nt-nav-count {
+  padding: 0 6px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 9.5px;
+  line-height: 17px;
+  flex: none;
+}
+.nt-nav-tools { display: none; gap: 1px; margin-left: 1px; }
+.nt-nav-item:hover .nt-nav-tools { display: flex; }
+.nt-nav-item:hover .nt-nav-count { display: none; }
+.nt-nav-sep {
+  padding: 11px 8px 4px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dsw-alias-label-secondary);
+  opacity: 0.85;
+}
+.nt-nav-empty { padding: 4px 9px; font-size: 10.5px; color: var(--dsw-alias-label-secondary); opacity: 0.7; }
+.nt-mini {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+.nt-mini:hover { background: var(--dsw-alias-bg-layer-2); color: var(--dsw-alias-label-primary); }
+.nt-mini.nt-danger:hover {
+  color: var(--dsw-alias-state-error-primary);
+  background: color-mix(in srgb, var(--dsw-alias-state-error-primary) 12%, transparent);
+}
+.nt-nav-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 9px;
+  border-top: 1px solid var(--dsw-alias-border-l1);
+}
+.nt-foot-row { display: flex; gap: 6px; }
+.nt-foot-row .nt-btn { flex: 1; min-width: 0; }
+.nt-undo-hint {
+  padding: 6px 8px;
+  border: 1px dashed var(--dsw-alias-border-l1);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 5%, transparent);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 9.5px;
+  line-height: 1.5;
+}
+
+.nt-list {
+  display: flex;
+  flex-direction: column;
+  width: 292px;
+  flex: 0 0 292px;
+  min-height: 0;
+  border-right: 1px solid var(--dsw-alias-border-l1);
+  background: var(--dsw-alias-bg-base);
+}
+.nt-list-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+}
+.nt-search {
+  flex: 1;
+  min-width: 0;
+  height: 33px;
+  padding: 0 9px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 11.5px;
+  outline: none;
+}
+.nt-search:focus { border-color: var(--dsw-alias-brand-primary); }
+.nt-add {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  flex: none;
+  border: 0;
+  border-radius: 8px;
+  background: var(--dsw-alias-brand-primary);
+  color: var(--dsw-alias-bg-base);
+  cursor: pointer;
+}
+.nt-add:hover { filter: brightness(1.08); }
+.nt-list-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 10px;
+}
+.nt-list-tip { opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nt-note-list { flex: 1; min-height: 0; overflow-y: auto; }
+.nt-card {
+  position: relative;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  cursor: pointer;
+  user-select: none;
+}
+.nt-card:hover { background: var(--dsw-alias-bg-layer-2); }
+.nt-card.is-active {
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: inset 2px 0 0 var(--dsw-alias-brand-primary);
+}
+.nt-card.is-dragging { opacity: 0.4; }
+.nt-card h3 {
+  margin: 0 0 5px;
+  padding-right: 48px;
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nt-card-preview {
+  margin: 0 0 6px;
+  min-height: 15px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 11px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.nt-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 9.5px;
+}
+.nt-tag {
+  max-width: 120px;
+  padding: 0 5px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 4px;
+  background: var(--dsw-alias-bg-layer-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nt-tag.nt-tag-arch {
+  color: var(--dsw-alias-state-warn-primary);
+  border-color: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 30%, transparent);
+}
+.nt-tag.nt-tag-link {
+  color: var(--dsw-alias-state-success-primary);
+  border-color: color-mix(in srgb, var(--dsw-alias-state-success-primary) 30%, transparent);
+}
+.nt-card-tools {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  display: none;
+  gap: 1px;
+  padding: 1px;
+  border-radius: 6px;
+  background: var(--dsw-alias-bg-layer-2);
+}
+.nt-card:hover .nt-card-tools { display: flex; }
+.nt-empty-list {
+  padding: 54px 18px;
+  text-align: center;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 2;
+}
+.nt-empty-list span { font-size: 10.5px; opacity: 0.75; }
+.nt-arch-groups {
+  margin: 8px;
+  padding: 8px;
+  border: 1px dashed var(--dsw-alias-border-l1);
+  border-radius: 9px;
+}
+.nt-arch-title {
+  padding: 1px 2px 5px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+}
+.nt-arch-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+.nt-arch-item:hover { background: var(--dsw-alias-bg-layer-1); }
+.nt-arch-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.nt-editor {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  background: var(--dsw-alias-bg-base);
+}
+.nt-editor-empty {
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 24px;
+  text-align: center;
+  color: var(--dsw-alias-label-secondary);
+}
+.nt-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 5px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 15px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-brand-primary);
+}
+.nt-empty-icon svg { width: 23px; height: 23px; }
+.nt-editor-empty p { margin: 0; color: var(--dsw-alias-label-primary); font-size: 13px; }
+.nt-editor-empty .nt-empty-hint {
+  max-width: 360px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.nt-banner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 9px 16px 0;
+  padding: 6px 9px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 7px;
+  font-size: 10.5px;
+  min-width: 0;
+}
+.nt-banner-arch {
+  color: var(--dsw-alias-state-warn-primary);
+  border-color: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 28%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 8%, transparent);
+}
+.nt-banner-link {
+  color: var(--dsw-alias-state-success-primary);
+  border-color: color-mix(in srgb, var(--dsw-alias-state-success-primary) 28%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-success-primary) 8%, transparent);
+}
+.nt-banner-warn {
+  color: var(--dsw-alias-state-warn-primary);
+  border-color: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 28%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 7%, transparent);
+}
+.nt-banner-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nt-banner-hint { flex: none; font-size: 9.5px; opacity: 0.8; }
+.nt-editor-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 17px 3px;
+  flex: none;
+}
+.nt-title-input {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 18px;
+  font-weight: 650;
+  outline: none;
+}
+.nt-title-input::placeholder { color: var(--dsw-alias-label-secondary); opacity: 0.6; }
+.nt-editor-actions { display: flex; gap: 4px; flex: none; }
+.nt-editor-meta {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex-wrap: wrap;
+  padding: 0 17px 7px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 9.5px;
+  flex: none;
+}
+.nt-dirty { color: var(--dsw-alias-state-warn-primary); }
+.nt-dirty.is-clean { color: var(--dsw-alias-state-success-primary); }
+.nt-content {
+  flex: 1;
+  min-height: 100px;
+  margin: 0 17px;
+  padding: 11px 13px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 9px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1.8;
+  resize: none;
+  outline: none;
+}
+.nt-content:focus { border-color: color-mix(in srgb, var(--dsw-alias-brand-primary) 45%, var(--dsw-alias-border-l1)); }
+.nt-content::placeholder { color: var(--dsw-alias-label-secondary); opacity: 0.6; }
+.nt-editor-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 9px 17px;
+  flex: none;
+}
+.nt-file-actions { display: flex; gap: 4px; flex: none; }
+.nt-update-input {
+  flex: 1;
+  min-width: 120px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 7px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 11px;
+  outline: none;
+}
+.nt-update-input:focus { border-color: var(--dsw-alias-brand-primary); }
+.nt-history {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  max-height: 30%;
+  padding: 0 17px;
+  border-top: 1px solid var(--dsw-alias-border-l1);
+}
+.nt-history-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+}
+.nt-history-toggle svg:first-child { transition: transform 0.12s ease; }
+.nt-history-toggle.is-open svg:first-child { transform: rotate(180deg); }
+.nt-count {
+  padding: 0 6px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-layer-2);
+  font-size: 9px;
+  line-height: 16px;
+}
+.nt-history-body { overflow-y: auto; padding: 0 0 10px; }
+.nt-history-item {
+  display: flex;
+  gap: 7px;
+  position: relative;
+  margin-left: 4px;
+  padding: 0 0 9px 15px;
+  border-left: 1px solid var(--dsw-alias-border-l1);
+}
+.nt-history-item:last-child { border-left-color: transparent; }
+.nt-history-dot {
+  position: absolute;
+  left: -3px;
+  top: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dsw-alias-brand-primary);
+}
+.nt-history-content { min-width: 0; }
+.nt-history-time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  color: var(--dsw-alias-label-primary);
+  font-size: 9.5px;
+}
+.nt-history-badge {
+  padding: 0 4px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 12%, transparent);
+  color: var(--dsw-alias-brand-primary);
+  font-size: 8.5px;
+}
+.nt-history-badge.is-file {
+  background: color-mix(in srgb, var(--dsw-alias-state-success-primary) 12%, transparent);
+  color: var(--dsw-alias-state-success-primary);
+}
+.nt-history-text {
+  margin-top: 2px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 9.5px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.nt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 7px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nt-btn:hover { background: var(--dsw-alias-bg-layer-1); border-color: var(--dsw-alias-border-l2); }
+.nt-btn svg { width: 13px; height: 13px; flex: none; }
+.nt-btn-sm { height: 28px; padding: 0 7px; font-size: 11px; }
+.nt-btn-block { width: 100%; }
+.nt-btn-primary {
+  border-color: transparent;
+  background: var(--dsw-alias-brand-primary);
+  color: var(--dsw-alias-bg-base);
+  font-weight: 550;
+}
+.nt-btn-primary:hover { filter: brightness(1.06); }
+.nt-btn-linked {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-color: color-mix(in srgb, var(--dsw-alias-state-success-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-success-primary) 9%, transparent);
+  color: var(--dsw-alias-state-success-primary);
+}
+.nt-btn.nt-danger:hover {
+  color: var(--dsw-alias-state-error-primary);
+  border-color: color-mix(in srgb, var(--dsw-alias-state-error-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-state-error-primary) 8%, transparent);
+}
+
+.nt-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(560px, calc(100vw - 40px));
+  padding: 8px 11px 8px 15px;
+  transform: translateX(-50%);
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-overlay);
+  box-shadow: 0 12px 32px -18px rgba(15, 23, 42, 0.55);
+  color: var(--dsw-alias-label-primary);
+  font-size: 11.5px;
+}
+.nt-toast.is-error {
+  border-color: color-mix(in srgb, var(--dsw-alias-state-error-primary) 42%, transparent);
+  color: var(--dsw-alias-state-error-primary);
+}
+.nt-toast-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nt-toast-action {
+  flex: none;
+  padding: 3px 10px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--dsw-alias-brand-primary);
+  color: var(--dsw-alias-bg-base);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.nt-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(2px);
+}
+.nt-modal {
+  width: min(420px, 100%);
+  padding: 18px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 14px;
+  background: var(--dsw-alias-bg-overlay);
+  box-shadow: 0 24px 60px -24px rgba(15, 23, 42, 0.55);
+  color: var(--dsw-alias-label-primary);
+}
+.nt-modal-title { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+.nt-modal-message { margin: 0; color: var(--dsw-alias-label-secondary); font-size: 12px; line-height: 1.65; }
+.nt-modal-input {
+  width: 100%;
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-base);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12.5px;
+  outline: none;
+}
+.nt-modal-input:focus {
+  border-color: var(--dsw-alias-brand-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dsw-alias-brand-primary) 16%, transparent);
+}
+.nt-modal-error { margin-top: 7px; color: var(--dsw-alias-state-error-primary); font-size: 10.5px; }
+.nt-modal-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: 14px; }
+.nt-drop-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--dsw-alias-brand-primary);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 8%, transparent);
+  pointer-events: none;
+}
+.nt-drop-card {
+  padding: 13px 20px;
+  border: 1px solid var(--dsw-alias-brand-primary);
+  border-radius: 12px;
+  background: var(--dsw-alias-bg-overlay);
+  box-shadow: 0 12px 32px -18px rgba(15, 23, 42, 0.55);
+  color: var(--dsw-alias-brand-primary);
+  font-size: 12px;
+}
+@media (max-width: 1100px) {
+  .nt-nav { width: 190px; flex-basis: 190px; }
+  .nt-list { width: 260px; flex-basis: 260px; }
+}
+@media (max-width: 860px) {
+  .nt-app { padding: 12px 12px 10px; }
+  .nt-app-current { display: none; }
+  .nt-nav { width: 170px; flex-basis: 170px; }
+  .nt-list { width: 228px; flex-basis: 228px; }
+  .nt-nav-subtitle { display: none; }
+}
+`;
+
+    /* ------------------------------------------------------------------ */
     /* Registration                                                        */
     /* ------------------------------------------------------------------ */
 
@@ -3089,7 +5838,7 @@ window.__ModuleLoader__.load({
           }
           return uiWorkspace.pickDirectory();
         };
-        const Page = () => h(EditorPage, { t, rpc, pickDirectory });
+        const Page = () => h(AppPage, { t, rpc, pickDirectory });
 
         ctx.slots.inject('sidebar.panellist', () =>
           ctx.slots.register(

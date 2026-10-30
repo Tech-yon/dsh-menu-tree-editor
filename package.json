@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Visual multi-level menu tree editor for the DSH Web UI, with local-folder file management and image export.",
+  "description": "Notes workspace for the DSH Web UI: a notebook with groups, history and local-file linking, plus the multi-level menu tree editor under the Advanced menu.",
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",

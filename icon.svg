@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Menu Tree Editor">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Notes">
   <defs>
-    <linearGradient id="mte-bg" x1="16" y1="8" x2="112" y2="120" gradientUnits="userSpaceOnUse">
+    <linearGradient id="nte-bg" x1="16" y1="8" x2="112" y2="120" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#3B82F6"/>
       <stop offset="1" stop-color="#1D4ED8"/>
     </linearGradient>
   </defs>
-  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#mte-bg)"/>
-  <path d="M64 40v16M34 84V66h60v18" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
-  <rect x="46" y="22" width="36" height="22" rx="7" fill="#FFFFFF"/>
-  <rect x="18" y="80" width="32" height="22" rx="7" fill="#FFFFFF" opacity="0.95"/>
-  <rect x="78" y="80" width="32" height="22" rx="7" fill="#FFFFFF" opacity="0.95"/>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#nte-bg)"/>
+  <path d="M38 28h46a10 10 0 0 1 10 10v62H48a10 10 0 0 1-10-10z" fill="#FFFFFF"/>
+  <path d="M38 28v62a10 10 0 0 0 10 10M38 28h10" fill="none" stroke="#DBEAFE" stroke-width="4" stroke-linecap="round"/>
+  <path d="M54 50h26M54 62h20M54 74h23" fill="none" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+  <path d="M72 28v22l-6-4-6 4V28z" fill="#93C5FD"/>
 </svg>
