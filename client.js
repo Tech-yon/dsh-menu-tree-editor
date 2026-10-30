@@ -707,12 +707,21 @@ window.__ModuleLoader__.load({
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.notes) && Array.isArray(parsed.groups)) {
             parsed.meta = parsed.meta && typeof parsed.meta === 'object' ? parsed.meta : { seeded: true };
-            parsed.notes = parsed.notes.map((note) => ({
+            parsed.notes = parsed.notes.filter((note) => note && typeof note === 'object').map((note) => ({
               ...note,
+              title: typeof note.title === 'string' ? note.title : '',
+              content: typeof note.content === 'string' ? note.content : '',
               history: Array.isArray(note.history) ? note.history : [],
               archived: Boolean(note.archived),
               linkedFileName: typeof note.linkedFileName === 'string' ? note.linkedFileName : null,
             }));
+            parsed.groups = parsed.groups
+              .filter((group) => group && typeof group === 'object' && group.id)
+              .map((group) => ({
+                ...group,
+                name: typeof group.name === 'string' ? group.name : '未命名',
+                archived: Boolean(group.archived),
+              }));
             return parsed;
           }
         }
@@ -1712,6 +1721,8 @@ window.__ModuleLoader__.load({
             if (note && note.id && !noteIds.has(note.id)) {
               notes.push({
                 ...note,
+                title: typeof note.title === 'string' ? note.title : '',
+                content: typeof note.content === 'string' ? note.content : '',
                 archived: Boolean(note.archived),
                 linkedFileName: null,
                 history: Array.isArray(note.history) ? note.history : [],
