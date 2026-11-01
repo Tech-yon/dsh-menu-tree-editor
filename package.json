@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Notes workspace for the DSH Web UI: a notebook with groups, history and local-file linking, plus the multi-level menu tree editor under the Advanced menu.",
+  "description": "DSH大记记 — a notes workspace for the DSH Web UI: a notebook with groups, history and local-file linking, plus the multi-level menu tree editor under the Advanced menu.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tech-yon/DSH-Dajiji.git"
+  },
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",

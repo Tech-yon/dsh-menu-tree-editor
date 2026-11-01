@@ -1,7 +1,8 @@
-# 记事（DSH 插件）
+# DSH大记记（DSH 插件）
 
-一个用于 DSH Web UI 的「菜单树 + 笔记本」工作台。侧边栏入口名为 **记事**：
+一个用于 DSH Web UI 的「菜单树 + 笔记本」工作台。仓库名 **DSH-Dajiji**，侧边栏入口名为 **记事**：
 
+- 仓库：https://github.com/Tech-yon/DSH-Dajiji
 - 默认打开 **笔记本**：文件组、搜索、更新历史、撤销删除、本地文件关联、备份导入导出
 - 点击右上角 **高级菜单** → **工具** → **多级菜单树**，打开原来的树状菜单编辑器
 
@@ -34,7 +35,7 @@
 DSH 插件以 Bundle 形式安装。把这个目录安装到你的 DSH profile：
 
 1. 在插件管理器中选择本目录作为本地 bundle 安装，或安装 GitHub 地址：
-   `github:Tech-yon/dsh-menu-tree-editor`
+   `github:Tech-yon/DSH-Dajiji`
 2. 启用插件。
 3. 重启 DSH（Host 端本地文件接口在启动时注册），刷新页面。
 
